@@ -7,21 +7,16 @@
 #define endl '\n'
 using namespace std;
 
-int gcd(int a, int b){
-	if(a<0)a=-a; if(b<0)b=-b;
-	return a&&b?a>b?gcd(a%b, b):gcd(a, b%a):a+b;
-}
-
 struct pq{
 	int p=0, q=1;
 	pq(){}
 	pq(int _p, int _q):p(_p), q(_q){};
 	pq(int _p):p(_p), q(1){};
 	void Init(){if(q<0)q=-q, p=-p;}
-	pq operator+(pq rhs)const{int d=gcd(q, rhs.q), d1=q/d, d2=rhs.q/d, p1=p*d2+rhs.p*d1, q1=q*d2, d3=gcd(p1, q1); return pq(p1/d3, q1/d3);}
+	pq operator+(pq rhs)const{int d=__gcd(q, rhs.q), d1=q/d, d2=rhs.q/d, p1=p*d2+rhs.p*d1, q1=q*d2, d3=__gcd(p1, q1); return pq(p1/d3, q1/d3);}
 	pq operator-()const{return q<0?pq(p, -q):pq(-p, q);}
 	pq operator-(pq rhs)const{return *this+(-rhs);}
-	pq operator*(pq rhs)const{int p1=p*rhs.p, q1=q*rhs.q, d=gcd(p1, q1); return pq(p1/d, q1/d);}
+	pq operator*(pq rhs)const{int p1=p*rhs.p, q1=q*rhs.q, d=__gcd(p1, q1); return pq(p1/d, q1/d);}
 	pq operator/(pq rhs)const{return *this*pq(rhs.q, rhs.p);}
 	TEM pq operator+(T rhs)const{return *this+pq(rhs);}
 	TEM pq operator-(T rhs)const{return *this-pq(rhs);}
@@ -54,8 +49,8 @@ ostream &operator<<(ostream &out, pq a){
 template <typename T1>
 struct Matrix{
 	int m=0, n=0, rk=0;
-	T1 a[kN][kN]={0}, g[kN][kN]={0}, gj[kN][kN]={0}, inv[kN][kN]={0};
-	bool freer[kN], freec[kN], invertible=1, gauss=0, gaussjordan=0;
+	T1 a[kN][kN]={0}, g[kN][kN]={0}, gj[kN][kN]={0}, inv[kN][kN]={0}, q[kN][kN];
+	bool freer[kN], freec[kN], invertible=1, gauss=0, gaussjordan=0, qr=0;
 	pair<int, int> pivot[kN];
 	Matrix(){}
 	Matrix(int m, int n):m(m), n(n){}
@@ -107,6 +102,10 @@ struct Matrix{
 			rep(j, n)if(gj[i][j]!=0){r=(T1)1/gj[i][j]; rep(l, n)gj[i][l]*=r, inv[i][l]*=r; break;}
 		}
 	}
+	void QR(){
+		if(qr)return;
+
+	}
 	Matrix<T1> Inv(){
 		GaussJordan();
 		Matrix<T1> M;
@@ -145,6 +144,9 @@ struct Matrix{
 	Matrix<T1> Proj(){
 		return *this*(this->T()**this).Inv()*this->T();
 	}
+	Matrix<T1> Q(){
+
+	}
 };
 
 TEM istream &operator>>(istream &in, Matrix<T> &M){
@@ -158,27 +160,63 @@ TEM ostream &operator<<(ostream &out, Matrix<T> M){
 }
 
 typedef Matrix<pq> M_t;
+map<string, M_t> a;
 
 signed main(){
 	cout<<"This is a program to calculate some useful things of a matrix.\nIt may be helpful for your linear algebra homework.\n";
 	string s;
 	cout<<"Enter a command: ";
 	while(cin>>s){
-		if(s=="help")cout<<"To input a m x n matrix, input m and n and m lines of n integers.\n\
+		if(s=="help")cout<<"\nInput a matrix:\n\
+To input a m x n matrix, input m and n and m lines of n integers.\n\
 Example:\n\
 3 4\n\
 1 2 3 4\n\
 5 6 7 8\n\
-9 0 1 2\n\
-mul A B: calculate A*B\n\
-all A: calculate the inverse, Gauss elimination, null space, Gauss elimination of transpose, left null space, projection of A\n\
-exit: end the program\n";
+9 0 1 2\n\n\
+Functions:\n\
+inv matrixName: return the inverse of matrixName\n\
+T matrixName: return the transpose of matrixName\n\
+N matrixName: return the null space of matrixName\n\
+proj matrixName: return the projection of matrixName\n\
+mul matrixName1 matrixName2: return matrixName1*matrixName2\n\n\
+Commands:\n\
+matrixName (or function): output the matrix (or result)\n\
+new matrixName (input a matrix): let matrixName be the input matrix\n\
+let matrixName1 functionName matrixName2: let matrixName1 be function(matrixName2)\n\
+all matrixName: calculate the inverse, Gauss elimination, null space, Gauss elimination of transpose, left null space, projection of matrixName\n\
+exit: end the program\n\n";
+		else if(s=="new"){
+			string t; cin>>t, a[t]=M_t(), cin>>a[t];
+		}
+		else if(s=="let"){
+			string t, f, A; cin>>t>>f>>A;
+			if(a.find(A)==a.end())cout<<"Matrix not found\n";
+			else{
+				if(f=="inv")a[t]=a[A].Inv();
+				else if(f=="T")a[t]=a[A].T();
+				else if(f=="N")a[t]=a[A].N();
+				else if(f=="proj")a[t]=a[A].Proj();
+				else if(f=="mul"){
+					string B; cin>>B;
+					if(a.find(B)==a.end())cout<<"Matrix not found\n";
+					else a[t]=a[A]*a[B];
+				}
+				else cout<<"Function not found\n";
+			}
+		}
+		else if(s=="inv"){string A; cin>>A, cout<<a[A].Inv();}
+		else if(s=="T"){string A; cin>>A, cout<<a[A].T();}
+		else if(s=="N"){string A; cin>>A, cout<<a[A].N();}
+		else if(s=="proj"){string A; cin>>A, cout<<a[A].Proj();}
 		else if(s=="mul"){
-			M_t A, B; cin>>A>>B;
-			cout<<A*B;
+			string A, B; cin>>A>>B;
+			if(a.find(A)==a.end()||a.find(B)==a.end())cout<<"Matrix not found\n";
+			else cout<<a[A]*a[B];
 		}
 		else if(s=="all"){
-			M_t A, B; cin>>A, A.Gauss(), B=A.T(), B.Gauss(), A.GaussJordan(), B.GaussJordan();
+			string t; cin>>t;
+			M_t A=a[t], B; A.Gauss(), B=A.T(), B.Gauss(), A.GaussJordan(), B.GaussJordan();
 			M_t G=M_t(A.m, A.n, A.g), H=M_t(B.m, B.n, B.g), G2=M_t(A.m, A.n, A.gj), H2=M_t(B.m, B.n, B.gj);
 			cout<<"Inverse:\n"<<A.Inv()<<"Gauss elimination:\n"<<G;
 			cout<<"Null space:\n"<<A.N();
@@ -188,6 +226,7 @@ exit: end the program\n";
 			cout<<"Projection:\n"<<A.Proj();
 		}
 		else if(s=="exit")return 0;
+		else if(a.find(s)!=a.end())cout<<a[s];
 		else cout<<"Not a command, enter \"help\" for more information\n";
 		cout<<"Enter a command: ";
 	}
