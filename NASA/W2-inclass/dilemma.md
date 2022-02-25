@@ -9,6 +9,6 @@ The firewall device in our department becomes unstable one week before the midte
 # NTU COOL video incident
 NTU COOL has lost most of the encoded video files due to an incident, as described in the class today. How do you dispatch the CPU resources to encode the video uploaded for the new semester and the old videos from previous semesters? Please explain your plan and how the plan can minimize the impact to the user.
 
-我會先發公告給使用者，請大家儘量將新影片上傳到youtube，在cool放youtube連結，如果真的有需求才把影片上傳到cool，這樣可以大幅減少cool需要encode的新影片的量，將這些新影片encode後，剩下的CPU再拿去reencode之前的舊影片。我會這麼做的原因是：
+我會先發公告給使用者，請大家儘量將新影片上傳到youtube，在cool放youtube連結，如果真的有需求才把影片上傳到cool，這樣可以大幅減少cool需要encode的新影片的量，將剩下這些新影片encode後，剩下的CPU再拿去reencode之前的舊影片。我會這麼做的原因是：
 1. 讓使用者儘量將影片上傳到youtube，雖然可能會讓他們有些不方便，但也因為並非強制的，所以不會對使用者造成太嚴重的影響。
-2. 先encode新影片再reencode舊影片是因為，新影片往往比舊影片更要緊，encode新影片才能降低對使用者的影響。
+2. 先encode新影片再reencode舊影片是因為，新影片往往比舊影片更要緊，encode新影片比較能降低對使用者的影響。
