@@ -51,7 +51,6 @@ void connect(ll *a, ll *l, ll *r, int bth){
     else a->nxt->prv=l, rev(l), l->nxt=a->nxt, a->nxt=r, rev(r), r->prv=a;
     p[idx(bth, l->gp)]=l;
     if(q[idx(bth, r->gp)]==tail+bth)q[idx(bth, r->gp)]=r;
-    //printf("%d %d %d %d %d %d\n", r->prv->id, r->id, r->nxt->id, l->prv->id, l->id, l->nxt->id);
 }
 
 void print(){
@@ -91,12 +90,6 @@ int main(){
             for(int i=0, now=gp[0]; i<j; now=gp[++i])connect(p[idx(bth[a].prv->id, now)], q[idx(a, now)], p[idx(a, now)], bth[a].prv->id);
             head[a].nxt=NULL;
         }
-        /*for(int i=0; i<m; ++i){
-            for(int j=0; j<k; ++j)printf("%d %d ", q[idx(i, j)]->id, p[idx(i, j)]->id);
-            printf("\n");
-        }
-        printf("%d:\n", n);
-        print();*/
     }
     print();
 }
