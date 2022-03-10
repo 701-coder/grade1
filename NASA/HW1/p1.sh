@@ -1,6 +1,6 @@
 #!/bin/bash
 
-temp=`mktemp -d`
+#temp=`mktemp -d`
 
 WA(){
     echo 'usage: ./p1.sh -s <Unix timestamp > -e <Unix timestamp > <input file>'
@@ -47,27 +47,33 @@ fi
 if [[ -z $5 ]]; then
     WA
 fi
+NEWLINE=$'\n'
 all=`cat $5`
 
 if ! [[ -z $6 ]]; then
-    all=`cat $6`$all
+    all=`cat $6`$NEWLINE$all
 fi
 
 if ! [[ -z $7 ]]; then
-    all=`cat $7`$all
+    all=`cat $7`$NEWLINE$all
 fi
+
+all=`echo "$all"`
 
 sall=''
 while IFS= read -r line; do
     t=`echo $line | grep -o -P '(?<=\[).*?(?=\])' | head -n 1`
     T=`date --date="$t" '+%s'`
-    f=`echo $line | awk '{out=$6; for(i=7;i<=NF;i++){out=out" "$i}; print out}'`
-    NEWLINE=$'\n'
-    sall="$sall$T $f$NEWLINE"
+    f=${line:27}
+    #f=`echo $line | awk '{out=$6; for(i=7;i<=NF;i++){out=out" "$i}; print out}'`
+    sall+="$T $f$NEWLINE"
 done <<< $all
 
+#exit 0
+
 sall=`echo "$sall" | head -n -1`
-sall=`echo "$sall" | sort --stable -k 1,1`
+sall=`echo "$sall" | sort --stable -k 2`
+sall=`echo "$sall" | sort --stable -n`
 
 while IFS= read -r line; do
     t=`echo $line | awk '{print $1}'`
@@ -78,4 +84,4 @@ done <<< $sall
 
 #sort --stable -k 5,5 -k 2,4 $temp/out
 
-rm -r $temp
+#rm -r $temp

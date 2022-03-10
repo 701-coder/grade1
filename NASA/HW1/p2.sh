@@ -9,6 +9,7 @@ NEWLINE='@'
 sym=0
 sl=0
 slFile=''
+LC_ALL=C
 
 dfs(){
     s=''
@@ -23,6 +24,7 @@ dfs(){
     lp=0
 
     if [[ $3 != '.' ]] && [[ -d $3 ]]; then
+        pwd0=`pwd`
         cd $3
         S=`pwd -P`
         ifs0=$IFS
@@ -34,7 +36,7 @@ dfs(){
             fi
         done
         IFS=$ifs0
-        cd ..
+        cd $pwd0
     fi
 
     if [[ $sl == 1 ]]; then
@@ -53,7 +55,7 @@ dfs(){
                 que2=1
             fi
         done
-        if [[ $lp == 1 ]]; then
+        if [[ $lp == 1 ]] && [[ $1 -le $2 ]]; then
             echo "$s$3 (loop)"
         elif [[ $sl == 1 ]]; then
             echo "$s$3 -> $slFile"
