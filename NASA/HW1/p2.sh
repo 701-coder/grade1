@@ -43,7 +43,7 @@ dfs(){
         lp=0
     fi
 
-    if [[ $I == '' ]] || [[ $3 =~ $I ]]; then
+    if [[ "$I" == '' ]] || [[ "$3" =~ "$I" ]]; then
         ifs0=$IFS
         IFS="$NEWLINE"
         read -ra A0 <<< "$que0"
