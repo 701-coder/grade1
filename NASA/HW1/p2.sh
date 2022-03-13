@@ -20,7 +20,9 @@ dfs(){
         s="|$s "
     fi
     S=`pwd -P`
-    Que1="$Que1$NEWLINE$S"
+    if [[ $1 != 0 ]] || [[ $3 == '.' ]]; then
+        Que1="$Que1$NEWLINE$S"
+    fi
     lp=0
 
     if [[ $3 != '.' ]] && [[ -d $3 ]]; then
@@ -55,7 +57,7 @@ dfs(){
                 que2=1
             fi
         done
-        if [[ $lp == 1 ]] && [[ $1 -le $2 ]]; then
+        if [[ $lp == 1 ]] && [[ $sym == 0 ]] && [[ $1 -le $2 ]]; then
             echo "$s$3 (loop)"
         elif [[ $sl == 1 ]]; then
             echo "$s$3 -> $slFile"
