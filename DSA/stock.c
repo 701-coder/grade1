@@ -21,8 +21,6 @@ inline ll minl(ll a, ll b){return a<b?a:b;}
 
 ll Price(int s, int t){return price(s, t+1);}
 
-//int price(int s, int t){return s+t/1024*1024+1023-t%1024;}
-
 typedef struct T{
     int id, jd; ll p;
 }T;
@@ -69,15 +67,6 @@ int upper_bound(ll *l, ll *r, ll x){ //the least i s.t. l[i]>x
     }
     return l-a+1;
 }
-/*int lower_bound(ll *l, ll *r, ll x){
-    ll *a=l;
-    while(r-l>1){
-        ll *m=l+(r-l>>1);
-        if(*m>x)r=m;
-        else l=m;
-    }
-    return l-a;
-}*/
 
 ll kth(ll *l, ll *r, int K){
     if(r-l<2)return *l;
@@ -92,13 +81,6 @@ ll kth(ll *l, ll *r, int K){
     }
     return i<=K&&K<j?m:i>K?kth(l, l+i, K):kth(l+j, r, K-j);
 }
-/*ll kth(ll *l, ll *r, int k){
-    if(r-l<2)return *l;
-    ll m=l[rand()%(r-l)];
-    int i=0;
-    for(int j=0; j<r-l; ++j)if(l[j]<m||l[j]==m&&rand()&1)swap(l+i, l+j), ++i;
-    return i==k?m:i>k?kth(l, l+i, k):kth(l+i, r, k-i);
-}*/
 
 int main(){
     scanf("%d%d%d", &a, &q, &n);
@@ -109,13 +91,9 @@ int main(){
     for(int i=0; i<a; ++i)mn[i]=1;
     for(int i=0; i<kM; ++i)mn[t[i].id]=max(mn[t[i].id], t[i].jd+1);
     for(int i=0; i<a; ++i)for(int j=0; j<min((mn[i]+2<<10), oo+1); ++j)b[nb++]=Price(s[i], j), assert(nb<(kN*5));
-    //printf("%d\n", nb);
-    //for(int i=0; i<10; ++i)printf("%llu%c", b[i], " \n"[i==9]);
     ll ub=kth(b, b+nb, 999999);
-    //for(int i=0; i<10; ++i)printf("%llu%c", b[i], " \n"[i==9]);
     for(int i=0, j=0; i<nb; ++i)if(b[i]<=ub)b[j++]=b[i];
     nb=1000000, sort(b, b+nb);
-    //for(int i=0; i<10; ++i)printf("%d ", b[i]);
     while(q--){
         int s0, k;
         scanf("%d%d", &s0, &k), --k;
@@ -134,13 +112,9 @@ int main(){
             if(upper_bound(b, b+nb, Price(s0, m<<10))+(m-1<<10)>k)r=m;
             else l=m;
         }
-        //printf("%d\n", l);
-        //for(int i=0; i<kN; ++i)if(Price(s0, i)==144499628)printf("here %d\n", i);
-        //printf("%d %d\n", l-1<<10, l+2<<10);
         int L=max(l-2, 0);
         for(int i=0; i<kM*4; ++i)c[i]=Price(s0, (L<<10)+i);
         sort(c, c+kM*4), k-=L<<10;
-        //if(c[0]>=b[k]){printf("%llu\n", b[k]); continue;}
         l=0, r=kM*4;
         while(r-l>1){
             int m=l+r>>1;
@@ -148,11 +122,6 @@ int main(){
             else l=m;
         }
         int x=upper_bound(b, b+nb, c[l])+l;
-        //printf("%d %d\n", x, l);
-        //for(int i=0; i<10; ++i)printf("%llu ", b[k-l-1+i]); printf("\n");
-        //printf("%llu %llu %llu %llu %llu\n", b[k-l-1], b[k-l], b[k-l+1], b[k-l+2], b[k-l+3]);
-        //for(int i=30; i<100; ++i)printf("%llu ", c[l+i]);
-        //printf("%d\n", L);
         printf("%llu\n", x==k?c[l]:b[k-l-1]);
     }
 }
